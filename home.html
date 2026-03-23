@@ -269,87 +269,137 @@
             display: none;
         }
 
-        /* Popup */
-        .popup-overlay {
+        /* Popup - Grupo WhatsApp */
+        .whatsapp-popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 10000;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10001;
             display: flex;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(4px);
         }
         
-        .popup-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
+        .whatsapp-popup-content {
+            background: linear-gradient(135deg, #075E54 0%, #128C7E 100%);
+            padding: 25px 20px 30px 20px;
+            border-radius: 24px;
             width: 90%;
-            max-width: 380px;
+            max-width: 400px;
             text-align: center;
             position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: popupSlideIn 0.4s ease-out;
         }
         
-        .popup-close {
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .whatsapp-popup-close {
             position: absolute;
-            top: 10px;
-            right: 15px;
+            top: 12px;
+            right: 18px;
             font-size: 28px;
             cursor: pointer;
-            color: #555;
+            color: white;
             line-height: 1;
             z-index: 10;
-        }
-        
-        .popup-image {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            max-height: 50vh;
-            object-fit: cover;
-        }
-        
-        .popup-text {
-            margin-bottom: 15px;
-            color: #222 !important;
-            font-size: 14px;
-            line-height: 1.5;
-            text-align: center;
-            width: 100%;
-        }
-        
-        .popup-text * {
-            color: #222 !important;
-        }
-        
-        .popup-text p {
-            margin-bottom: 5px;
-            color: #222 !important;
-        }
-        
-        .popup-btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.2s;
         }
         
-        .popup-btn:active {
-            transform: scale(0.95);
+        .whatsapp-popup-close:hover {
+            transform: scale(1.1);
+        }
+        
+        .whatsapp-icon-large {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .whatsapp-icon-large img {
+            width: 45px;
+            height: 45px;
+        }
+        
+        .whatsapp-popup-content h2 {
+            color: white;
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .whatsapp-popup-message {
+            color: white;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .whatsapp-popup-message p {
+            margin: 8px 0;
+        }
+        
+        .whatsapp-popup-message strong {
+            color: #ffeb3b;
+        }
+        
+        .whatsapp-popup-btn {
+            display: inline-block;
+            padding: 14px 35px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .whatsapp-popup-btn:hover {
+            transform: scale(1.05);
+            background: #20b859;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .whatsapp-popup-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .reward-text {
+            background: rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        
+        .reward-text span {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffeb3b;
         }
 
         /* Loader original */
@@ -370,6 +420,33 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10000;
+        }
+        
+        /* Botão flutuante WhatsApp (opcional) */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 999;
+            transition: transform 0.2s;
+        }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+        
+        .whatsapp-float img {
+            width: 32px;
+            height: 32px;
         }
     </style>
     
@@ -679,6 +756,11 @@
         
         <!-- Floating Element -->
         <div class="xuanfu" draggable="true" id="moveDiv" bis_skin_checked="1"></div>
+        
+        <!-- Botão flutuante WhatsApp -->
+        <div class="whatsapp-float" onclick="OracleApp.openWhatsAppGroup()">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12c0 1.93.52 3.78 1.44 5.4L2 22l4.6-1.44C8.22 21.48 10.07 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm3.6 14.4c-.3.6-.9 1-1.5 1-.4 0-.8-.1-1.2-.3-.9-.4-1.7-1-2.3-1.6-.6-.6-1.2-1.4-1.6-2.3-.2-.4-.3-.8-.3-1.2 0-.6.4-1.2 1-1.5.2-.1.4-.1.6 0 .2.1.4.3.5.5.2.4.4.8.6 1.2.1.2.1.4 0 .6-.1.2-.3.3-.5.4-.1.1-.2.2-.2.3 0 .1 0 .2.1.3.3.5.7.9 1.2 1.2.2.1.4.2.6.2.1 0 .2 0 .3-.1.1-.1.2-.2.3-.3.1-.1.2-.2.3-.2.1 0 .2 0 .3.1.2.1.3.2.4.4.2.3.4.6.5.9.1.2.1.4 0 .6z'/%3E%3C/svg%3E" alt="WhatsApp">
+        </div>
     </div>
 
     <!-- Hidden Elements -->
@@ -694,23 +776,6 @@
     <div id="blurred-background" style="display: none;"></div>
     <div class="loaderd" id="preloade" style="display: none;"></div>
 
-    <!-- Popup -->
-    <div class="popup-overlay" id="homePopup" style="display: none;">
-        <div class="popup-content">
-            <span class="popup-close" onclick="closePopup()">&times;</span>
-            <img src="https://orac-le.online/public/uploads/popup/1769103113_popup.jpg" alt="Popup Image" class="popup-image">
-            <div class="popup-text">
-                <blockquote class="dropdown-item">
-                    <p class="dropdown-item"><img src="https://i.postimg.cc/Bn6ZDQR2/circulo-de-flecha-(2).png" style="width: 24px;"> Obtenha 1000kz ao concluir seu cadastro</p>
-                    <p class="dropdown-item"><img src="https://i.postimg.cc/Bn6ZDQR2/circulo-de-flecha-(2).png" style="letter-spacing: 0.15px; width: 24px;"><span style="letter-spacing: 0.15px;">&nbsp;</span><span style="letter-spacing: 0.15px;">&nbsp;Retiradas disponíveis 24 horas por dia</span></p>
-                    <p class="dropdown-item"><img src="https://i.postimg.cc/Bn6ZDQR2/circulo-de-flecha-(2).png" style="letter-spacing: 0.15px; width: 24px;"><span style="letter-spacing: 0.15px;">&nbsp;</span><span style="letter-spacing: 0.15px;">&nbsp;Rendimentos automatizados e por hora&nbsp;</span><span style="letter-spacing: 0.15px;"><br></span></p>
-                    <p class="dropdown-item"><img src="img/watsapp.jpg" data-filename="circulo-de-flecha (1).png" style="width: 24px;">&nbsp; O gerente perdeu acesso ao antigo grupo, recomendamos que todos entrem no nosso novo grupo<span style="letter-spacing: 0.15px; text-align: inherit; font-size: 1rem;">&nbsp;</span></p>
-                </blockquote>
-            </div>
-            <a href="https://chat.whatsapp.com/LqWM2O2ktIpGR5NjhiwkEk?mode=gi_t" class="popup-btn">Solicitar Entrada</a>
-        </div>
-    </div>
-
     <!-- SISTEMA COMPLETO COM APIS REAIS CORRIGIDAS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
@@ -723,93 +788,22 @@
             // SUAS APIS REAIS
             API_BASE: 'https://bd-p4q7.onrender.com',
             DOMAIN: 'https://orac-le.online',
+            WHATSAPP_LINK: 'https://chat.whatsapp.com/LqWM2O2ktIpGR5NjhiwkEk?mode=gi_t',
             
             // Configurações
             TOKEN_EXPIRY_HOURS: 5,
             
             // NOVOS PLANOS VIP - 9 PLANOS
             plans: [
-                { 
-                    id: 1, 
-                    name: "VIP 1 - Bronze", 
-                    price: 6000, 
-                    daily: 600, 
-                    hourly: 25, 
-                    total: 219000,
-                    days: 365 
-                },
-                { 
-                    id: 2, 
-                    name: "VIP 2 - Prata", 
-                    price: 12000, 
-                    daily: 1200, 
-                    hourly: 50, 
-                    total: 436800,
-                    days: 364 
-                },
-                { 
-                    id: 3, 
-                    name: "VIP 3 - Ouro", 
-                    price: 24000, 
-                    daily: 2400, 
-                    hourly: 100, 
-                    total: 876000,
-                    days: 365 
-                },
-                { 
-                    id: 4, 
-                    name: "VIP 4 - Platina", 
-                    price: 48000, 
-                    daily: 4800, 
-                    hourly: 200, 
-                    total: 1752000,
-                    days: 365 
-                },
-                { 
-                    id: 5, 
-                    name: "VIP 5 - Diamante", 
-                    price: 96000, 
-                    daily: 9600, 
-                    hourly: 400, 
-                    total: 3504000,
-                    days: 365 
-                },
-                { 
-                    id: 6, 
-                    name: "VIP 6 - Esmeralda", 
-                    price: 192000, 
-                    daily: 19200, 
-                    hourly: 800, 
-                    total: 7008000,
-                    days: 365 
-                },
-                { 
-                    id: 7, 
-                    name: "VIP 7 - Rubi", 
-                    price: 384000, 
-                    daily: 38400, 
-                    hourly: 1600, 
-                    total: 14016000,
-                    days: 365 
-                },
-                { 
-                    id: 8, 
-                    name: "VIP 8 - Safira", 
-                    price: 768000, 
-                    daily: 76800, 
-                    hourly: 3200, 
-                    total: 28032000,
-                    days: 365 
-                },
-                { 
-                    id: 9, 
-                    name: "VIP 9 - Diamante Negro", 
-                    price: 1536000, 
-                    daily: 153600, 
-                    hourly: 6400, 
-                    total: 56064000,
-                    days: 365 
-                }
+                { id: 1, name: "VIP 1 - Bronze", price: 6000, daily: 600, hourly: 25, total: 219000, days: 365 },
+                { id: 2, name: "VIP 2 - Prata", price: 12000, daily: 1200, hourly: 50, total: 436800, days: 364 },
+                { id: 3, name: "VIP 3 - Ouro", price: 24000, daily: 2400, hourly: 100, total: 876000, days: 365 },
+                { id: 4, name: "VIP 4 - Platina", price: 48000, daily: 4800, hourly: 200, total: 1752000, days: 365 },
+                { id: 5, name: "VIP 5 - Diamante", price: 96000, daily: 9600, hourly: 400, total: 3504000, days: 365 },
+                { id: 6, name: "VIP 6 - Esmeralda", price: 192000, daily: 19200, hourly: 800, total: 7008000, days: 365 },
+                { id: 7, name: "VIP 7 - Rubi", price: 384000, daily: 38400, hourly: 1600, total: 14016000, days: 365 },
+                { id: 8, name: "VIP 8 - Safira", price: 768000, daily: 76800, hourly: 3200, total: 28032000, days: 365 },
+                { id: 9, name: "VIP 9 - Diamante Negro", price: 1536000, daily: 153600, hourly: 6400, total: 56064000, days: 365 }
             ],
             
             // Inicialização
@@ -819,6 +813,7 @@
                 this.checkAuth();
                 this.loadUserData();
                 this.setupPage();
+                this.showWhatsAppPopupOnRefresh();
             },
             
             // ============================================
@@ -870,6 +865,70 @@
                 localStorage.removeItem('user_token');
                 localStorage.removeItem('user_id');
                 localStorage.removeItem('remembered_phone');
+            },
+            
+            // ============================================
+            // MODAL WHATSAPP - SEMPRE ABRE AO ATUALIZAR
+            // ============================================
+            
+            showWhatsAppPopupOnRefresh() {
+                // SEMPRE abre o modal ao atualizar a página (não usa sessionStorage)
+                setTimeout(() => {
+                    this.createWhatsAppPopup();
+                }, 1500);
+            },
+            
+            createWhatsAppPopup() {
+                // Verifica se já existe algum popup para não duplicar
+                if (document.getElementById('whatsapp-popup-active')) return;
+                
+                const overlay = document.createElement('div');
+                overlay.className = 'whatsapp-popup-overlay';
+                overlay.id = 'whatsapp-popup-active';
+                
+                overlay.innerHTML = `
+                    <div class="whatsapp-popup-content">
+                        <span class="whatsapp-popup-close" onclick="OracleApp.closeWhatsAppPopup()">&times;</span>
+                        <div class="whatsapp-icon-large">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2325D366'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12c0 1.93.52 3.78 1.44 5.4L2 22l4.6-1.44C8.22 21.48 10.07 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm3.6 14.4c-.3.6-.9 1-1.5 1-.4 0-.8-.1-1.2-.3-.9-.4-1.7-1-2.3-1.6-.6-.6-1.2-1.4-1.6-2.3-.2-.4-.3-.8-.3-1.2 0-.6.4-1.2 1-1.5.2-.1.4-.1.6 0 .2.1.4.3.5.5.2.4.4.8.6 1.2.1.2.1.4 0 .6-.1.2-.3.3-.5.4-.1.1-.2.2-.2.3 0 .1 0 .2.1.3.3.5.7.9 1.2 1.2.2.1.4.2.6.2.1 0 .2 0 .3-.1.1-.1.2-.2.3-.3.1-.1.2-.2.3-.2.1 0 .2 0 .3.1.2.1.3.2.4.4.2.3.4.6.5.9.1.2.1.4 0 .6z'/%3E%3C/svg%3E" alt="WhatsApp">
+                        </div>
+                        <h2>📢 ATENÇÃO!</h2>
+                        <div class="whatsapp-popup-message">
+                            <p><strong>O grupo antigo foi banido do WhatsApp!</strong></p>
+                            <p>Todos devem entrar no NOVO GRUPO para continuar recebendo:</p>
+                            <div class="reward-text">
+                                <p>✨ <strong>BÔNUS EXCLUSIVOS</strong> ✨</p>
+                                <p>💰 <span>RECOMPENSAS DIÁRIAS</span> 💰</p>
+                                <p>🎁 <strong>+ Bônus de entrada!</strong> 🎁</p>
+                            </div>
+                            <p>👇 <strong>Clique no botão abaixo para entrar agora!</strong> 👇</p>
+                        </div>
+                        <button class="whatsapp-popup-btn" onclick="OracleApp.openWhatsAppGroup()">
+                            🚀 ENTRAR NO GRUPO AGORA 🚀
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+            },
+            
+            closeWhatsAppPopup() {
+                const popup = document.getElementById('whatsapp-popup-active');
+                if (popup) {
+                    popup.style.animation = 'popupSlideIn 0.3s reverse';
+                    setTimeout(() => {
+                        if (popup.parentNode) popup.remove();
+                    }, 300);
+                }
+            },
+            
+            openWhatsAppGroup() {
+                // Abre o link do WhatsApp automaticamente
+                window.open(this.WHATSAPP_LINK, '_blank');
+                // Fecha o popup após clicar
+                this.closeWhatsAppPopup();
+                // Mostra confirmação
+                this.showToast('✅ Redirecionando para o grupo do WhatsApp!', 'success');
             },
             
             // ============================================
@@ -956,7 +1015,6 @@
                 try {
                     const token = this.getToken();
                     
-                    // DADOS CORRETOS PARA A API
                     const requestData = {
                         product_id: planId.toString(),
                         product_name: planName,
@@ -967,7 +1025,6 @@
                     };
                     
                     console.log('📤 Enviando dados para API:', requestData);
-                    console.log('URL:', `${this.API_BASE}/api/purchase`);
                     
                     const response = await fetch(`${this.API_BASE}/api/purchase`, {
                         method: 'POST',
@@ -1082,18 +1139,7 @@
             },
             
             setupPage() {
-                setTimeout(() => {
-                    const popup = document.getElementById('homePopup');
-                    if (popup && !sessionStorage.getItem('popupShown')) {
-                        popup.style.display = 'flex';
-                        sessionStorage.setItem('popupShown', 'true');
-                    }
-                }, 1000);
-            },
-            
-            closePopup() {
-                const popup = document.getElementById('homePopup');
-                if (popup) popup.style.display = 'none';
+                // Configuração inicial da página
             }
         };
         
@@ -1105,7 +1151,7 @@
             OracleApp.init();
             
             window.closePopup = function() {
-                OracleApp.closePopup();
+                OracleApp.closeWhatsAppPopup();
             };
             
             document.onreadystatechange = function() {
