@@ -324,11 +324,11 @@
     // ==============================================
     const API_URL = 'https://bd-p4q7.onrender.com';
     
-    // Informações dos bancos - TODOS COM O MESMO IBAN E NOME CONFORME SOLICITADO
+    // Informações dos bancos - CORRIGIDO
     const bankInfo = {
       'BAI': {
         name: 'Banco BAI',
-        beneficiary: 'Mauricio Sangonde
+        beneficiary: 'Mauricio Sangonde',  // CORRIGIDO: aspas fechadas
         iban: '005500006041284810139',
         reference: '13 minutos ' + Math.floor(100000 + Math.random() * 900000)
       },
@@ -464,7 +464,9 @@
     // Mostrar/ocultar loading
     function showLoading(show) {
       const overlay = document.getElementById('loadingOverlay');
-      overlay.classList.toggle('hidden', !show);
+      if (overlay) {
+        overlay.classList.toggle('hidden', !show);
+      }
     }
 
     // Mostrar toast
@@ -472,6 +474,8 @@
       const toast = document.getElementById('toast');
       const toastMessage = document.getElementById('toast-message');
       const toastIcon = document.getElementById('toast-icon');
+      
+      if (!toast || !toastMessage || !toastIcon) return;
       
       if (isSuccess) {
         toastIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
@@ -497,14 +501,15 @@
 
     // Formatar moeda
     function formatCurrency(value) {
-      if (!value) return 'KZ 0,00';
+      if (!value && value !== 0) return 'KZ 0,00';
       const number = parseFloat(value);
       return 'KZ ' + number.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
     }
 
     // Copiar texto
-    function copiarTexto(elementId) {
+    window.copiarTexto = function(elementId) {  // TORNADO GLOBAL
       const element = document.getElementById(elementId);
+      if (!element) return;
       const text = element.textContent;
       
       navigator.clipboard.writeText(text)
@@ -515,7 +520,7 @@
           console.error('Erro ao copiar:', err);
           showToast('Erro ao copiar texto', false);
         });
-    }
+    };
 
     // Converter arquivo para base64
     function fileToBase64(file) {
@@ -551,7 +556,10 @@
           if (response.ok) {
             const data = await response.json();
             if (data.data && data.data.wallet_balance !== undefined) {
-              document.getElementById('userBalance').textContent = formatCurrency(data.data.wallet_balance);
+              const balanceElement = document.getElementById('userBalance');
+              if (balanceElement) {
+                balanceElement.textContent = formatCurrency(data.data.wallet_balance);
+              }
               return;
             }
           }
@@ -562,16 +570,25 @@
         try {
           const userId = localStorage.getItem('user_id');
           if (userId) {
-            document.getElementById('userBalance').textContent = 'KZ 0,00';
+            const balanceElement = document.getElementById('userBalance');
+            if (balanceElement) {
+              balanceElement.textContent = 'KZ 0,00';
+            }
           }
         } catch (error2) {
           console.log('Tentativa 2 falhou:', error2.message);
-          document.getElementById('userBalance').textContent = 'KZ 0,00';
+          const balanceElement = document.getElementById('userBalance');
+          if (balanceElement) {
+            balanceElement.textContent = 'KZ 0,00';
+          }
         }
         
       } catch (error) {
         console.error('Erro ao carregar saldo:', error);
-        document.getElementById('userBalance').textContent = 'KZ 0,00';
+        const balanceElement = document.getElementById('userBalance');
+        if (balanceElement) {
+          balanceElement.textContent = 'KZ 0,00';
+        }
       }
     }
 
@@ -580,103 +597,132 @@
     // ==============================================
 
     // Selecionar valor rápido
-    document.querySelectorAll('.deposit-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const valor = btn.dataset.value;
-        document.getElementById('valorInput').value = valor;
-        document.getElementById('valorInput').dispatchEvent(new Event('input'));
+    function setupQuickDepositButtons() {
+      document.querySelectorAll('.deposit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const valor = btn.dataset.value;
+          const valorInput = document.getElementById('valorInput');
+          if (valorInput) {
+            valorInput.value = valor;
+            valorInput.dispatchEvent(new Event('input'));
+          }
+        });
       });
-    });
+    }
 
     // Selecionar banco
-    document.querySelectorAll('.canal-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.canal-btn').forEach(b => {
-          b.classList.remove('border-2', 'border-purple-500', 'text-purple-400');
-          b.classList.add('border', 'border-gray-700', 'text-gray-400');
+    function setupBankSelection() {
+      document.querySelectorAll('.canal-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.canal-btn').forEach(b => {
+            b.classList.remove('border-2', 'border-purple-500', 'text-purple-400');
+            b.classList.add('border', 'border-gray-700', 'text-gray-400');
+          });
+
+          btn.classList.remove('border', 'border-gray-700', 'text-gray-400');
+          btn.classList.add('border-2', 'border-purple-500', 'text-purple-400');
+
+          selectedBank = btn.dataset.banco;
+          const selectedBankInput = document.getElementById('selectedBank');
+          if (selectedBankInput) {
+            selectedBankInput.value = selectedBank;
+          }
         });
-
-        btn.classList.remove('border', 'border-gray-700', 'text-gray-400');
-        btn.classList.add('border-2', 'border-purple-500', 'text-purple-400');
-
-        selectedBank = btn.dataset.banco;
-        document.getElementById('selectedBank').value = selectedBank;
       });
-    });
+    }
 
     // Validar valor mínimo
-    document.getElementById('valorInput').addEventListener('input', function() {
-      const valor = parseFloat(this.value);
-      const btnDepositar = document.getElementById('btnDepositar');
-      
-      if (valor < 2500 || isNaN(valor)) {
-        btnDepositar.disabled = true;
-        btnDepositar.classList.add('opacity-50', 'cursor-not-allowed');
-      } else {
-        btnDepositar.disabled = false;
-        btnDepositar.classList.remove('opacity-50', 'cursor-not-allowed');
+    function setupAmountValidation() {
+      const valorInput = document.getElementById('valorInput');
+      if (valorInput) {
+        valorInput.addEventListener('input', function() {
+          const valor = parseFloat(this.value);
+          const btnDepositar = document.getElementById('btnDepositar');
+          
+          if (btnDepositar) {
+            if (valor < 2500 || isNaN(valor)) {
+              btnDepositar.disabled = true;
+              btnDepositar.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+              btnDepositar.disabled = false;
+              btnDepositar.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+          }
+        });
       }
-    });
+    }
 
     // Upload de arquivo
-    document.getElementById('comprovante').addEventListener('change', async function(e) {
-      const file = e.target.files[0];
-      const fileNameElement = document.getElementById('fileName');
-      const fileError = document.getElementById('fileError');
-      
-      if (!file) {
-        selectedFile = null;
-        receiptImageBase64 = null;
-        fileNameElement.classList.add('hidden');
-        return;
-      }
+    function setupFileUpload() {
+      const comprovanteInput = document.getElementById('comprovante');
+      if (comprovanteInput) {
+        comprovanteInput.addEventListener('change', async function(e) {
+          const file = e.target.files[0];
+          const fileNameElement = document.getElementById('fileName');
+          const fileError = document.getElementById('fileError');
+          
+          if (!file) {
+            selectedFile = null;
+            receiptImageBase64 = null;
+            if (fileNameElement) fileNameElement.classList.add('hidden');
+            return;
+          }
 
-      const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-      if (!validTypes.includes(file.type)) {
-        fileError.textContent = 'Apenas imagens PNG, JPG ou JPEG são permitidas';
-        fileError.classList.remove('hidden');
-        this.value = '';
-        selectedFile = null;
-        receiptImageBase64 = null;
-        fileNameElement.classList.add('hidden');
-        return;
-      }
+          const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+          if (!validTypes.includes(file.type)) {
+            if (fileError) {
+              fileError.textContent = 'Apenas imagens PNG, JPG ou JPEG são permitidas';
+              fileError.classList.remove('hidden');
+            }
+            this.value = '';
+            selectedFile = null;
+            receiptImageBase64 = null;
+            if (fileNameElement) fileNameElement.classList.add('hidden');
+            return;
+          }
 
-      if (file.size > 2 * 1024 * 1024) {
-        fileError.textContent = 'O arquivo é muito grande (máximo 2MB)';
-        fileError.classList.remove('hidden');
-        this.value = '';
-        selectedFile = null;
-        receiptImageBase64 = null;
-        fileNameElement.classList.add('hidden');
-        return;
-      }
+          if (file.size > 2 * 1024 * 1024) {
+            if (fileError) {
+              fileError.textContent = 'O arquivo é muito grande (máximo 2MB)';
+              fileError.classList.remove('hidden');
+            }
+            this.value = '';
+            selectedFile = null;
+            receiptImageBase64 = null;
+            if (fileNameElement) fileNameElement.classList.add('hidden');
+            return;
+          }
 
-      fileError.classList.add('hidden');
-      selectedFile = file;
-      
-      try {
-        receiptImageBase64 = await fileToBase64(file);
-        fileNameElement.textContent = `Arquivo: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-        fileNameElement.classList.remove('hidden');
-      } catch (error) {
-        showToast('Erro ao processar imagem', false);
-        this.value = '';
-        selectedFile = null;
-        receiptImageBase64 = null;
-        fileNameElement.classList.add('hidden');
+          if (fileError) fileError.classList.add('hidden');
+          selectedFile = file;
+          
+          try {
+            receiptImageBase64 = await fileToBase64(file);
+            if (fileNameElement) {
+              fileNameElement.textContent = `Arquivo: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+              fileNameElement.classList.remove('hidden');
+            }
+          } catch (error) {
+            showToast('Erro ao processar imagem', false);
+            this.value = '';
+            selectedFile = null;
+            receiptImageBase64 = null;
+            if (fileNameElement) fileNameElement.classList.add('hidden');
+          }
+        });
       }
-    });
+    }
 
     // ==============================================
     // MODAL DE DEPÓSITO
     // ==============================================
 
-    // Abrir modal de depósito
-    function abrirModalDeposito() {
+    // Abrir modal de depósito - TORNADO GLOBAL
+    window.abrirModalDeposito = function() {
       if (!verificarLogin()) return;
       
-      const valor = parseFloat(document.getElementById('valorInput').value);
+      const valorInput = document.getElementById('valorInput');
+      const valor = parseFloat(valorInput ? valorInput.value : 0);
       
       if (!valor || isNaN(valor)) {
         showToast('Digite um valor válido', false);
@@ -697,37 +743,66 @@
       
       const bank = bankInfo[selectedBank];
       
-      document.getElementById('depositValor').textContent = formatCurrency(valor);
-      document.getElementById('modalBancoNome').textContent = selectedBank;
-      document.getElementById('modalBankName').textContent = bank.name;
-      document.getElementById('beneficiaryName').textContent = bank.beneficiary;
-      document.getElementById('ibanNumber').textContent = bank.iban;
-      document.getElementById('referenceNumber').textContent = bank.reference;
+      const depositValorElement = document.getElementById('depositValor');
+      const modalBancoNomeElement = document.getElementById('modalBancoNome');
+      const modalBankNameElement = document.getElementById('modalBankName');
+      const beneficiaryNameElement = document.getElementById('beneficiaryName');
+      const ibanNumberElement = document.getElementById('ibanNumber');
+      const referenceNumberElement = document.getElementById('referenceNumber');
       
-      document.getElementById('comprovante').value = '';
-      document.getElementById('fileName').classList.add('hidden');
-      document.getElementById('fileError').classList.add('hidden');
+      if (depositValorElement) depositValorElement.textContent = formatCurrency(valor);
+      if (modalBancoNomeElement) modalBancoNomeElement.textContent = selectedBank;
+      if (modalBankNameElement) modalBankNameElement.textContent = bank.name;
+      if (beneficiaryNameElement) beneficiaryNameElement.textContent = bank.beneficiary;
+      if (ibanNumberElement) ibanNumberElement.textContent = bank.iban;
+      if (referenceNumberElement) referenceNumberElement.textContent = bank.reference;
+      
+      const comprovanteInput = document.getElementById('comprovante');
+      const fileNameElement = document.getElementById('fileName');
+      const fileError = document.getElementById('fileError');
+      
+      if (comprovanteInput) comprovanteInput.value = '';
+      if (fileNameElement) fileNameElement.classList.add('hidden');
+      if (fileError) fileError.classList.add('hidden');
+      
       selectedFile = null;
       receiptImageBase64 = null;
       
-      document.getElementById('depositModal').classList.remove('hidden');
-      document.getElementById('depositModal').classList.add('flex');
-    }
-
-    // Fechar modal
-    function fecharModal(event) {
-      if (!event || event.target.id === "depositModal" || event.target.tagName === 'BUTTON') {
-        document.getElementById('depositModal').classList.add('hidden');
-        document.getElementById('depositModal').classList.remove('flex');
+      const depositModal = document.getElementById('depositModal');
+      if (depositModal) {
+        depositModal.classList.remove('hidden');
+        depositModal.classList.add('flex');
       }
-    }
+    };
+
+    // Fechar modal - TORNADO GLOBAL
+    window.fecharModal = function(event) {
+      if (!event || event.target.id === "depositModal" || event.target.tagName === 'BUTTON') {
+        const depositModal = document.getElementById('depositModal');
+        if (depositModal) {
+          depositModal.classList.add('hidden');
+          depositModal.classList.remove('flex');
+        }
+      }
+    };
 
     // ==============================================
     // ENVIO DE DEPÓSITO
     // ==============================================
 
-    // Confirmar depósito
-    async function confirmarDeposito() {
+    // Obter código do banco
+    function getBankCode(bankName) {
+      const codes = {
+        'BAI': '0055',
+        'BFA': '0054',
+        'BIC': '0052',
+        'ATL': '0053'
+      };
+      return codes[bankName] || '0000';
+    }
+
+    // Confirmar depósito - TORNADO GLOBAL
+    window.confirmarDeposito = async function() {
       if (!verificarLogin()) return;
       
       if (!receiptImageBase64) {
@@ -739,9 +814,9 @@
       const buttonText = document.getElementById('buttonText');
       const buttonLoader = document.getElementById('buttonLoader');
       
-      confirmButton.disabled = true;
-      buttonText.textContent = 'Enviando...';
-      buttonLoader.classList.remove('hidden');
+      if (confirmButton) confirmButton.disabled = true;
+      if (buttonText) buttonText.textContent = 'Enviando...';
+      if (buttonLoader) buttonLoader.classList.remove('hidden');
       
       try {
         const bank = bankInfo[selectedBank];
@@ -795,7 +870,7 @@
         showToast('Depósito enviado com sucesso! Aguarde a aprovação.', true);
         
         setTimeout(() => {
-          fecharModal();
+          window.fecharModal();
           
           setTimeout(() => {
             window.location.href = 'withdraw/historydeposito.html';
@@ -814,22 +889,11 @@
         }
         
       } finally {
-        confirmButton.disabled = false;
-        buttonText.textContent = 'Enviar comprovante';
-        buttonLoader.classList.add('hidden');
+        if (confirmButton) confirmButton.disabled = false;
+        if (buttonText) buttonText.textContent = 'Enviar comprovante';
+        if (buttonLoader) buttonLoader.classList.add('hidden');
       }
-    }
-
-    // Obter código do banco
-    function getBankCode(bankName) {
-      const codes = {
-        'BAI': '0055',
-        'BFA': '0054',
-        'BIC': '0052',
-        'ATL': '0053'
-      };
-      return codes[bankName] || '0000';
-    }
+    };
 
     // ==============================================
     // INICIALIZAÇÃO
@@ -845,21 +909,26 @@
       }
       
       loadUserBalance();
+      setupQuickDepositButtons();
+      setupBankSelection();
+      setupAmountValidation();
+      setupFileUpload();
       
       const firstBankBtn = document.querySelector('.canal-btn');
       if (firstBankBtn) {
         firstBankBtn.click();
       }
       
-      document.getElementById('valorInput').value = '2500';
-      document.getElementById('valorInput').dispatchEvent(new Event('input'));
+      const valorInput = document.getElementById('valorInput');
+      if (valorInput) {
+        valorInput.value = '2500';
+        valorInput.dispatchEvent(new Event('input'));
+      }
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        fecharModal();
+        window.fecharModal();
       }
     });
   </script>
-</body>
-</html>
